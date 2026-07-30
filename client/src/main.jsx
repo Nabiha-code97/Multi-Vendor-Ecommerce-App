@@ -4,11 +4,13 @@ import './index.css'
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App.jsx'
 import AppRoutes from './AppRoutes.jsx'
+import { Toaster } from 'sonner';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Router>
     <AppRoutes />
+    <Toaster visibleToasts={1} position="top-right" richColors />
     </Router>
   </StrictMode>,
 )
