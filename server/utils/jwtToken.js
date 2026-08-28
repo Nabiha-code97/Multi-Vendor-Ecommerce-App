@@ -2,7 +2,6 @@
 const sendToken = (user, statusCode, res)=>{
 
     const token = user.getJwtToken();
-    console.log("Token:", token);
 
     const options = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),

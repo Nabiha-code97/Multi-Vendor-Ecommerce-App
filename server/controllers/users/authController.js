@@ -1,5 +1,4 @@
 import User from "../../models/User.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import ErrorHandler from "../../utils/ErrorHandler.js";
@@ -24,26 +23,19 @@ export const registerUser = async (req, res, next) => {
     // Upload avatar to Cloudinary
     const result = await uploadImage(req.file);
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    // Temporary user object
+    // Temporary user object (password hashed later by the User model's pre-save hook)
     const user = {
       name,
       email,
-      password: passwordHash,
+      password,
       avatar: {
         public_id: result.public_id,
         url: result.secure_url,
       },
     };
 
-    console.log(user);
-
     // Generate activation token
     const activationToken = generateActivationToken(user);
-
-    console.log("Activation token:", activationToken);
 
     // Activation URL
     const activationURL = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
@@ -99,20 +91,16 @@ export const loginUser = async (req, res, next) => {
       return next(new ErrorHandler("Please enter email and password", 400));
     }
     const user = await User.findOne({ email }).select("+password");
-    // const passwordHash = bcrypt.hash(password, 10);
     if (!user) {
       return next(new ErrorHandler("Invalid email or password", 401));
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isPasswordMatched = await user.comparePassword(password);
 
     if (!isPasswordMatched) {
       return next(new ErrorHandler("Invalid email or password", 401));
     }
-    console.log(user);
+
     // Login user
     return sendToken(user, 200, res);
   } catch (error) {

@@ -1,27 +1,24 @@
 import express from "express"
+import { isAuthenticated } from "../../middleware/auth.js";
+import { upload } from "../../middleware/upload.js";
+import {
+  getCurrentUser,
+  updateUserInfo,
+  updateUserAvatar,
+  updateUserAddresses,
+  deleteUserAddress,
+  updateUserPassword,
+  getUserById,
+} from "../../controllers/users/userController.js";
 
 const userRouter = express.Router();
 
-userRouter.post("/register", registerUser);
-userRouter.post("/activate-account", activateUser);
-userRouter.post("/login", loginUser);
-userRouter.post("/logout", logoutUser);
-userRouter.get("/me", authUser, getCurrentUser);
-userRouter.put("/me",updateUserInfo)
-userRouter.put("/avatar",updateUserAvatar)
-userRouter.put("/",updateUserAddresses)
-// 6. updateUserInfo
+userRouter.get("/me", isAuthenticated, getCurrentUser);
+userRouter.put("/update-user-info", isAuthenticated, updateUserInfo);
+userRouter.put("/update-avatar", isAuthenticated, upload.single("avatar"), updateUserAvatar);
+userRouter.put("/update-user-addresses", isAuthenticated, updateUserAddresses);
+userRouter.delete("/delete-user-address/:id", isAuthenticated, deleteUserAddress);
+userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
+userRouter.get("/user-info/:id", getUserById);
 
-// 7. updateUserAvatar
-
-// 8. updateUserAddresses
-
-// 9. deleteUserAddress
-
-// 10. updateUserPassword
-
-// 11. getUserById
-
-// 12. getAllUsers
-
-// 13. deleteUser
+export default userRouter;
