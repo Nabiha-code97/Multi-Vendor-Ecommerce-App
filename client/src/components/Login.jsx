@@ -4,9 +4,12 @@ import styles from "../styles/styles"
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loadUser } from "../redux/actions/user";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
@@ -25,6 +28,7 @@ const Login = () => {
     );
 
     toast.success("Login Successful!");
+    dispatch(loadUser());
     navigate("/");
   } catch (err) {
     toast.error(err.response?.data?.message || "Something went wrong");
