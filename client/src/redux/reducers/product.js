@@ -59,7 +59,23 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
+    // all products, platform-wide --- admin
+    .addCase("getAllProductsAdminRequest", (state) => {
+      state.adminProductsLoading = true;
+    })
+    .addCase("getAllProductsAdminSuccess", (state, action) => {
+      state.adminProductsLoading = false;
+      state.adminProducts = action.payload;
+    })
+    .addCase("getAllProductsAdminFailed", (state, action) => {
+      state.adminProductsLoading = false;
+      state.error = action.payload;
+    })
+
     .addCase("clearErrors", (state) => {
       state.error = null;
+    })
+    .addCase("clearMessages", (state) => {
+      state.message = null;
     });
 });

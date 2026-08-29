@@ -52,3 +52,16 @@ export const getAllProducts = () => async (dispatch) => {
     dispatch({ type: "getAllProductsFailed", payload: error.response.data.message });
   }
 };
+
+// all products, platform-wide --- admin
+export const getAllProductsAdmin = () => async (dispatch) => {
+  try {
+    dispatch({ type: "getAllProductsAdminRequest" });
+    const { data } = await axios.get(`${BACKEND_URL}/api/product/admin-all-products`, {
+      withCredentials: true,
+    });
+    dispatch({ type: "getAllProductsAdminSuccess", payload: data.products });
+  } catch (error) {
+    dispatch({ type: "getAllProductsAdminFailed", payload: error.response.data.message });
+  }
+};
