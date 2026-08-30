@@ -18,7 +18,8 @@ const EventCard = ({ active, data }) => {
       if (data.stock < 1) {
         toast.error("Product stock limited!");
       } else {
-        const cartData = { ...data, qty: 1 };
+        // itemType tells checkout to look this id up in Event, not Product
+        const cartData = { ...data, itemType: "Event", qty: 1 };
         dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
