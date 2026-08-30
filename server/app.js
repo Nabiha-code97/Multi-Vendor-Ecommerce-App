@@ -11,21 +11,31 @@ import shopRouter from "./routes/shops/shopRoute.js";
 import shopAdminRouter from "./routes/shops/adminRoute.js";
 import productRouter from "./routes/products/productRoute.js";
 import productAdminRouter from "./routes/products/adminRoute.js";
-import paymentRouter from "./routes/paymentRoute.js";
+import orderRouter from "./routes/orders/orderRoute.js";
+import orderAdminRouter from "./routes/orders/adminRoute.js";
+import eventRouter from "./routes/events/eventRoute.js";
+import eventAdminRouter from "./routes/events/adminRoute.js";
+import couponRouter from "./routes/coupons/couponRoute.js";
+import couponAdminRouter from "./routes/coupons/adminRoute.js";
+import withdrawRouter from "./routes/withdraws/withdrawRoute.js";
+import withdrawAdminRouter from "./routes/withdraws/adminRoute.js";
+import paymentRouter, { webhookRouter } from "./routes/paymentRoute.js";
 import errorMiddleware from "./middleware/error.js";
 
 const app = express();
 
-// Stripe webhook needs the raw request body to verify its signature, so it
-// must be registered before express.json() parses (and consumes) the body.
-app.use("/api/payment", paymentRouter);
-
-app.use(express.json());
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,
 }));
 app.use(cookieParser());
+
+// Stripe webhook needs the raw request body to verify its signature, so it
+// must be registered before express.json() parses (and consumes) the body.
+app.use("/api/payment", webhookRouter);
+
+app.use(express.json());
+app.use("/api/payment", paymentRouter);
 app.use("/api/user", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/user", adminRouter);
@@ -34,6 +44,14 @@ app.use("/api/shop", shopRouter);
 app.use("/api/shop", shopAdminRouter);
 app.use("/api/product", productRouter);
 app.use("/api/product", productAdminRouter);
+app.use("/api/order", orderRouter);
+app.use("/api/order", orderAdminRouter);
+app.use("/api/event", eventRouter);
+app.use("/api/event", eventAdminRouter);
+app.use("/api/coupon", couponRouter);
+app.use("/api/coupon", couponAdminRouter);
+app.use("/api/withdraw", withdrawRouter);
+app.use("/api/withdraw", withdrawAdminRouter);
 
 app.use("/test", (req, res) => {
   res.send("Hello");

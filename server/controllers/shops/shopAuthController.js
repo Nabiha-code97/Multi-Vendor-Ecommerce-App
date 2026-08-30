@@ -116,11 +116,12 @@ export const loginShop = async (req, res, next) => {
 // log out seller
 export const logoutShop = async (req, res, next) => {
   try {
-    res.cookie("seller_token", null, {
-      expires: new Date(Date.now()),
+    // must mirror sendShopToken's cookie options exactly — a clearing Set-Cookie only
+    // overwrites the browser's copy if secure/sameSite match how it was originally set
+    res.clearCookie("seller_token", {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
     res.status(200).json({
       success: true,

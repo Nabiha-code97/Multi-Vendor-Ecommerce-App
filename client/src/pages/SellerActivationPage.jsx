@@ -1,14 +1,18 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const SellerActivationPage = () => {
   const { activationToken } = useParams();
   const [error, setError] = useState(false);
+  // StrictMode double-invokes effects in dev; the activation request isn't idempotent
+  // (a second call fails with "already exists"), so this guard is what keeps it to one call
+  const requestSent = useRef(false);
 
   useEffect(() => {
-    if (activationToken) {
+    if (activationToken && !requestSent.current) {
+      requestSent.current = true;
       const sendRequest = async () => {
         await axios
           .post(`${import.meta.env.VITE_API_URL}/api/shop/activation`, {
@@ -23,7 +27,7 @@ const SellerActivationPage = () => {
       };
       sendRequest();
     }
-  }, []);
+  }, [activationToken]);
 
   return (
     <div

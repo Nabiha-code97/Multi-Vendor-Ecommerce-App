@@ -128,13 +128,13 @@ const ProductDetails = ({ data }) => {
                       <div
                         key={index}
                         className={`${
-                          select === index ? "border" : "null"
-                        } cursor-pointer`}
+                          select === index ? "border" : ""
+                        } cursor-pointer mr-3 mt-3 inline-block`}
                       >
                         <img
                           src={`${i?.url}`}
                           alt=""
-                          className="h-[200px] overflow-hidden mr-3 mt-3"
+                          className="h-[200px] w-[200px] object-cover overflow-hidden"
                           onClick={() => setSelect(index)}
                         />
                       </div>

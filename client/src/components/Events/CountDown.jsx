@@ -1,7 +1,4 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-
-const BACKEND_URL = import.meta.env.VITE_API_URL;
 
 const CountDown = ({ data }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
@@ -11,19 +8,11 @@ const CountDown = ({ data }) => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    if (
-      typeof timeLeft.days === 'undefined' &&
-      typeof timeLeft.hours === 'undefined' &&
-      typeof timeLeft.minutes === 'undefined' &&
-      typeof timeLeft.seconds === 'undefined'
-    ) {
-      axios.delete(`${BACKEND_URL}/api/event/delete-shop-event/${data._id}`);
-    }
     return () => clearTimeout(timer);
-  });
+  }, [timeLeft]);
 
   function calculateTimeLeft() {
-    const difference = +new Date(data.Finish_Date) - +new Date();
+    const difference = +new Date(data.finishDate) - +new Date();
     let timeLeft = {};
 
     if (difference > 0) {
@@ -44,7 +33,7 @@ const CountDown = ({ data }) => {
     }
 
     return (
-      <span className="text-[25px] text-[#475ad2]">
+      <span className="text-[25px] text-[#475ad2]" key={interval}>
         {timeLeft[interval]} {interval}{" "}
       </span>
     );
@@ -52,11 +41,7 @@ const CountDown = ({ data }) => {
 
   return (
     <div>
-      {timerComponents.length ? (
-        timerComponents
-      ) : (
-        <span className="text-[red] text-[25px]">Time's Up</span>
-      )}
+      {timerComponents.length ? timerComponents : <span className="text-[red] text-[25px]">Time's Up</span>}
     </div>
   );
 };

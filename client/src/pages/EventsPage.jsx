@@ -13,7 +13,11 @@ const EventsPage = () => {
       ) : (
         <div>
           <Header activeHeading={4} />
-          <EventCard active={true} data={allEvents && allEvents[0]} />
+          {allEvents && allEvents.length > 0 ? (
+            <EventCard active={true} data={allEvents[0]} />
+          ) : (
+            <h4 className="text-center py-10">No events running right now!</h4>
+          )}
         </div>
       )}
     </>

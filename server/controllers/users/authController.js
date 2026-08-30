@@ -111,11 +111,12 @@ export const loginUser = async (req, res, next) => {
 // log out user
 export const logoutUser = async (req, res, next) => {
     try {
-      res.cookie("token", null, {
-        expires: new Date(Date.now()),
+      // must mirror sendToken's cookie options exactly — a clearing Set-Cookie only
+      // overwrites the browser's copy if secure/sameSite match how it was originally set
+      res.clearCookie("token", {
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       });
       res.status(200).json({
         success: true,
