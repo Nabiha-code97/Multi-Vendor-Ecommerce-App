@@ -2,6 +2,9 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
+  // starts true: until loadUser() resolves we don't yet know if there's a session,
+  // so route guards must wait rather than treating "not authenticated yet" as "not logged in"
+  loading: true,
 };
 
 export const userReducer = createReducer(initialState, (builder) => {
@@ -30,6 +33,40 @@ export const userReducer = createReducer(initialState, (builder) => {
     })
     .addCase("updateUserInfoFailed", (state, action) => {
       state.loading = false;
+      state.error = action.payload;
+    })
+
+    // update user avatar
+    .addCase("updateUserAvatarRequest", (state) => {
+      state.avatarLoading = true;
+    })
+    .addCase("updateUserAvatarSuccess", (state, action) => {
+      state.avatarLoading = false;
+      state.user = action.payload;
+    })
+    .addCase("updateUserAvatarFailed", (state, action) => {
+      state.avatarLoading = false;
+      state.error = action.payload;
+    })
+
+    // change password
+    .addCase("updateUserPasswordRequest", (state) => {
+      state.passwordLoading = true;
+    })
+    .addCase("updateUserPasswordSuccess", (state) => {
+      state.passwordLoading = false;
+    })
+    .addCase("updateUserPasswordFailed", (state, action) => {
+      state.passwordLoading = false;
+      state.error = action.payload;
+    })
+
+    // log out
+    .addCase("LogoutUserSuccess", (state) => {
+      state.isAuthenticated = false;
+      state.user = undefined;
+    })
+    .addCase("LogoutUserFailed", (state, action) => {
       state.error = action.payload;
     })
 
@@ -70,6 +107,19 @@ export const userReducer = createReducer(initialState, (builder) => {
       state.users = action.payload;
     })
     .addCase("getAllUsersFailed", (state, action) => {
+      state.usersLoading = false;
+      state.error = action.payload;
+    })
+
+    // delete a user --- admin
+    .addCase("deleteUserRequest", (state) => {
+      state.usersLoading = true;
+    })
+    .addCase("deleteUserSuccess", (state, action) => {
+      state.usersLoading = false;
+      state.users = (state.users || []).filter((user) => user._id !== action.payload);
+    })
+    .addCase("deleteUserFailed", (state, action) => {
       state.usersLoading = false;
       state.error = action.payload;
     })
