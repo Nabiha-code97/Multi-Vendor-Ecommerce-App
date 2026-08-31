@@ -4,6 +4,7 @@ import styles from "../../styles/styles";
 import { categoriesData, productData } from "../../static/data";
 import {
   AiOutlineHeart,
+  AiOutlineMessage,
   AiOutlineSearch,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
@@ -175,6 +176,14 @@ const Header = ({ activeHeading }) => {
                 </span>
               </div>
             </div>
+
+            {isAuthenticated && (
+              <div className={`${styles.noramlFlex}`}>
+                <Link to="/inbox" className="relative cursor-pointer mr-[15px]">
+                  <AiOutlineMessage size={30} color="rgb(255 255 255 / 83%)" />
+                </Link>
+              </div>
+            )}
 
             <div className={`${styles.noramlFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">

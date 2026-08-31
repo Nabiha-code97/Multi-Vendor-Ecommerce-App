@@ -6,11 +6,12 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { addTocart } from "../../redux/actions/cart";
+import { createConversation } from "../../redux/actions/message";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -19,12 +20,24 @@ import {
 const ProductDetailsCard = ({ setOpen, data }) => {
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   //   const [select, setSelect] = useState(false);
 
-  const handleMessageSubmit = () => {};
+  const handleMessageSubmit = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to create a conversation");
+      return;
+    }
+
+    const conversation = await dispatch(createConversation(data.shop._id));
+    if (conversation) {
+      navigate(`/inbox/${conversation._id}`);
+    }
+  };
 
   const decrementCount = () => {
     if (count > 1) {

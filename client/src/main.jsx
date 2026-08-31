@@ -6,14 +6,17 @@ import AppRoutes from './AppRoutes.jsx'
 import { Toaster } from 'sonner';
 import {Provider} from 'react-redux';
 import Store from './redux/store.js'
+import { ChatProvider } from './context/ChatContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={Store}>
-      <Router>
-        <AppRoutes />
-        <Toaster visibleToasts={1} position="top-right" richColors />
-      </Router>
+      <ChatProvider>
+        <Router>
+          <AppRoutes />
+          <Toaster visibleToasts={1} position="top-right" richColors />
+        </Router>
+      </ChatProvider>
     </Provider>
   </StrictMode>,
 )

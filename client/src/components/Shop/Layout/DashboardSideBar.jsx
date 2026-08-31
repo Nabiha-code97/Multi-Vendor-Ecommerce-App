@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { RxDashboard } from "react-icons/rx";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
+import { AiOutlineMessage } from "react-icons/ai";
 import { AiOutlineFolderAdd, AiOutlineGift, AiOutlineLogin, AiOutlineSetting } from "react-icons/ai";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { VscNewFile } from "react-icons/vsc";
@@ -20,6 +21,7 @@ const navItems = [
   { active: 7, to: "/dashboard-coupons", label: "Discount Codes", Icon: AiOutlineGift },
   { active: 8, to: "/dashboard-withdraw", label: "Withdraw Money", Icon: CiMoneyBill },
   { active: 9, to: "/dashboard-settings", label: "Settings", Icon: AiOutlineSetting },
+  { active: 10, to: "/dashboard-messages", label: "Messages", Icon: AiOutlineMessage },
 ];
 
 const DashboardSideBar = ({ active }) => {

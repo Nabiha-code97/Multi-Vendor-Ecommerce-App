@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -19,13 +20,14 @@ import couponRouter from "./routes/coupons/couponRoute.js";
 import couponAdminRouter from "./routes/coupons/adminRoute.js";
 import withdrawRouter from "./routes/withdraws/withdrawRoute.js";
 import withdrawAdminRouter from "./routes/withdraws/adminRoute.js";
+import messageRouter from "./routes/messages/messageRoute.js";
 import paymentRouter, { webhookRouter } from "./routes/paymentRoute.js";
 import errorMiddleware from "./middleware/error.js";
 
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 app.use(cookieParser());
@@ -52,6 +54,7 @@ app.use("/api/coupon", couponRouter);
 app.use("/api/coupon", couponAdminRouter);
 app.use("/api/withdraw", withdrawRouter);
 app.use("/api/withdraw", withdrawAdminRouter);
+app.use("/api/message", messageRouter);
 
 app.use("/test", (req, res) => {
   res.send("Hello");

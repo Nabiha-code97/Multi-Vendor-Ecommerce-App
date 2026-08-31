@@ -8,6 +8,7 @@ import { wishlistReducer } from "./reducers/wishlist";
 import { orderReducer } from "./reducers/order";
 import { couponReducer } from "./reducers/coupon";
 import { withdrawReducer } from "./reducers/withdraw";
+import { messageReducer } from "./reducers/message";
 
 const Store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ const Store = configureStore({
     order: orderReducer,
     coupons: couponReducer,
     withdraws: withdrawReducer,
+    messages: messageReducer,
   },
 });
 

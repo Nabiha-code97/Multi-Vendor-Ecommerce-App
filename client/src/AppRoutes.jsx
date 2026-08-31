@@ -37,6 +37,8 @@ import ShopAllEventsPage from './pages/ShopAllEventsPage'
 import ShopCreateEventPage from './pages/ShopCreateEventPage'
 import ShopAllCouponsPage from './pages/ShopAllCouponsPage'
 import ShopWithdrawPage from './pages/ShopWithdrawPage'
+import InboxPage from './pages/InboxPage'
+import ShopInboxPage from './pages/ShopInboxPage'
 
 export default function AppRoutes() {
   useEffect(()=>{
@@ -80,6 +82,10 @@ export default function AppRoutes() {
     <Route path='/dashboard-create-event' element={<ShopCreateEventPage/>} />
     <Route path='/dashboard-coupons' element={<ShopAllCouponsPage/>} />
     <Route path='/dashboard-withdraw' element={<ShopWithdrawPage/>} />
+    <Route path='/inbox' element={<InboxPage/>} />
+    <Route path='/inbox/:conversationId' element={<InboxPage/>} />
+    <Route path='/dashboard-messages' element={<ShopInboxPage/>} />
+    <Route path='/dashboard-messages/:conversationId' element={<ShopInboxPage/>} />
     </Routes>
     </>
   )
