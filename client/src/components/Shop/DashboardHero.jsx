@@ -28,7 +28,7 @@ const DashboardHero = () => {
         </div>
       </div>
 
-      <div className="flex gap-4 mt-8">
+      <div className="flex flex-wrap gap-4 mt-8">
         <Link to="/dashboard-create-product">
           <div className="w-[180px] bg-black h-[45px] flex items-center justify-center rounded-xl cursor-pointer">
             <h5 className="text-white">Create Product</h5>
