@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema({
 name:{
@@ -85,6 +86,21 @@ userSchema.methods.getJwtToken = function () {
 // compare password
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// generate reset password token
+userSchema.methods.getResetPasswordToken = function () {
+  // raw token goes in the email link; only its hash is stored, so a leaked DB can't be used to reset passwords
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordTime = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+  return resetToken;
 };
 
 const User = mongoose.model("User", userSchema);

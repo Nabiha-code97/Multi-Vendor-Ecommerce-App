@@ -1,8 +1,9 @@
 import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import ErrorHandler from "../../utils/ErrorHandler.js";
-import { sendEmail } from "../../utils/sendMail.js";
+import { sendEmail, sendResetPasswordEmail } from "../../utils/sendMail.js";
 import { uploadImage } from "../../utils/cloudinary.js";
 import sendToken from "../../utils/jwtToken.js";
 
@@ -127,6 +128,90 @@ export const logoutUser = async (req, res, next) => {
     }
   }
 
+
+// Request password reset
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(new ErrorHandler("Please enter your email", 400));
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(new ErrorHandler("User not found with this email", 404));
+    }
+
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    try {
+      await sendResetPasswordEmail(user.email, user.name, resetURL);
+
+      return res.status(200).json({
+        success: true,
+        message: `A password reset link has been sent to ${user.email}`,
+      });
+    } catch (error) {
+      // token is useless without a delivered email, so don't leave it valid
+      user.resetPasswordToken = undefined;
+      user.resetPasswordTime = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(new ErrorHandler(error.message, 500));
+    }
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+// Reset password using the emailed token
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword) {
+      return next(
+        new ErrorHandler("Please enter and confirm your new password", 400)
+      );
+    }
+
+    if (password !== confirmPassword) {
+      return next(new ErrorHandler("Passwords do not match", 400));
+    }
+
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordTime: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(
+        new ErrorHandler("Reset password token is invalid or has expired", 400)
+      );
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTime = undefined;
+    await user.save();
+
+    return sendToken(user, 200, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
 
 // Generate Activation Token
 const generateActivationToken = (user) => {
