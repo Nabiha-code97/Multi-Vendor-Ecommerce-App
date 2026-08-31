@@ -14,9 +14,9 @@ import {
   removeFromWishlist,
 } from "../../redux/actions/wishlist";
 import { addTocart } from "../../redux/actions/cart";
+import { createConversation } from "../../redux/actions/message";
 import { toast } from "sonner";
 import Ratings from "../Ratings/Ratings";
-import axios from "axios";
 
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -92,21 +92,14 @@ const ProductDetails = ({ data }) => {
   const averageRating = avg.toFixed(2);
 
   const handleMessageSubmit = async () => {
-    if (isAuthenticated) {
-      const groupTitle = data._id + user._id;
-      const userId = user._id;
-      const sellerId = data.shop._id;
-      try {
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/conversation/create-new-conversation`,
-          { groupTitle, userId, sellerId }
-        );
-        navigate(`/inbox?${res.data.conversation._id}`);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
-    } else {
+    if (!isAuthenticated) {
       toast.error("Please login to create a conversation");
+      return;
+    }
+
+    const conversation = await dispatch(createConversation(data.shop._id));
+    if (conversation) {
+      navigate(`/inbox/${conversation._id}`);
     }
   };
 

@@ -1,16 +1,70 @@
-# React + Vite
+# E-shop — Frontend (Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web client for E-shop, a multi-vendor e-commerce marketplace. Built with React 19, Vite, Redux Toolkit, and Tailwind CSS v4.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Storefront** — home page with categories, featured products, and flash-sale events; product listing and detail pages; cart and wishlist (persisted in `localStorage`)
+- **Checkout & Payment** — shipping form → Stripe PaymentIntent → payment confirmation → order success page
+- **Buyer account** — signup with email activation, login, profile info/avatar, address book, order history, password change
+- **Seller dashboard** — shop signup/login, overview, product & event management (with image upload), order management, coupon codes, withdrawal requests, shop settings
+- **Admin dashboard** — manage users, sellers, products, orders, events, and withdrawal approvals
+- **Real-time chat** — buyer↔seller messaging over Socket.io
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + Vite
+- Redux Toolkit
+- React Router v7
+- Tailwind CSS v4
+- Axios
+- Stripe (`@stripe/react-stripe-js`)
+- Socket.io client
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+client/
+├── src/
+│   ├── App.jsx / AppRoutes.jsx   # App shell and route definitions
+│   ├── components/                # UI components, grouped by feature area
+│   ├── pages/                      # Route-level page components
+│   ├── redux/                       # Store, actions, reducers
+│   ├── context/                      # React context (e.g. chat socket)
+│   ├── lib/                           # Third-party client setup (Stripe, etc.)
+│   └── static/                         # Static display data
+├── public/
+└── index.html
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- The `server` API and `socket` service running (see their READMEs)
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env` file in `client/`:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:4000
+VITE_STRIPE_PUBLIC_KEY=your_stripe_publishable_key
+```
+
+### Run
+
+```bash
+npm run dev        # start dev server with HMR
+npm run build       # production build
+npm run preview      # preview the production build locally
+npm run lint           # run ESLint
+```
