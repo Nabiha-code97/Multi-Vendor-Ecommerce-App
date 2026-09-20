@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import Loader from './components/Layout/Loader'
 import App from './App'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
@@ -17,8 +18,13 @@ import ShopCreatePage from './pages/ShopCreatePage'
 import ShopLoginPage from './pages/ShopLoginPage'
 import SellerActivationPage from './pages/SellerActivationPage'
 import ProductDetailsPage from './pages/ProductDetailsPage'
+import ShopPreviewPage from './pages/ShopPreviewPage'
+import NotFoundPage from './pages/NotFoundPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 import CheckoutPage from './pages/CheckoutPage'
-import PaymentPage from './pages/PaymentPage'
+// lazy-loaded: PaymentPage pulls in stripe.js, which must not initialize until the payment route is actually visited
+const PaymentPage = lazy(() => import('./pages/PaymentPage'))
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import ShopDashboardPage from './pages/ShopDashboardPage'
 import ShopAllProductsPage from './pages/ShopAllProductsPage'
@@ -49,10 +55,13 @@ export default function AppRoutes() {
   },[]);
   return (
     <>
+    <Suspense fallback={<Loader />}>
     <Routes>
     <Route path='/' element={<HomePage/>} />
     <Route path='/login' element={<LoginPage/>} />
     <Route path='/sign-up' element={<SignUpPage/>} />
+    <Route path='/forgot-password' element={<ForgotPasswordPage/>} />
+    <Route path='/reset-password/:token' element={<ResetPasswordPage/>} />
     <Route path='/activation/:activationToken' element={<ActivationPage/>}/>
     <Route path='/best-selling' element={<BestSellingPage/>} />
     <Route path='/products' element={<ProductsPage/>} />
@@ -62,6 +71,7 @@ export default function AppRoutes() {
     <Route path='/shop-login' element={<ShopLoginPage/>} />
     <Route path='/seller/activation/:activationToken' element={<SellerActivationPage/>}/>
     <Route path='/product/:id' element={<ProductDetailsPage/>} />
+    <Route path='/shop/preview/:id' element={<ShopPreviewPage/>} />
     <Route path='/checkout' element={<CheckoutPage/>} />
     <Route path='/payment' element={<PaymentPage/>} />
     <Route path='/order/success' element={<OrderSuccessPage/>} />
@@ -86,7 +96,9 @@ export default function AppRoutes() {
     <Route path='/inbox/:conversationId' element={<InboxPage/>} />
     <Route path='/dashboard-messages' element={<ShopInboxPage/>} />
     <Route path='/dashboard-messages/:conversationId' element={<ShopInboxPage/>} />
+    <Route path='*' element={<NotFoundPage/>} />
     </Routes>
+    </Suspense>
     </>
   )
 }
