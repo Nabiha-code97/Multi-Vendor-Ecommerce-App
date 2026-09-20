@@ -22,14 +22,15 @@ const SellerActivationPage = () => {
             console.log(res);
           })
           .catch((err) => {
-            setError(err.response?.data?.message || "Activation failed");
+            const message = err.response?.data?.message || "";
+            setError(message === "Shop already exists" ? "already-activated" : "expired");
           });
       };
       sendRequest();
     }
   }, [activationToken]);
 
-  const alreadyActivated = error === "Shop already exists";
+  const alreadyActivated = error === "already-activated";
 
   return (
     <div
@@ -48,11 +49,13 @@ const SellerActivationPage = () => {
       ) : alreadyActivated ? (
         <p>This shop is already activated. Please log in.</p>
       ) : (
-        <p>{error}</p>
+        <p>This activation link is invalid or has expired. Please sign up again.</p>
       )}
       <div style={{ display: "flex", gap: "16px" }}>
         <Link to="/">Go to homepage</Link>
-        {(alreadyActivated || !error) && <Link to="/shop-login">Go to shop login</Link>}
+        {alreadyActivated && <Link to="/shop-login">Go to shop login</Link>}
+        {!error && <Link to="/shop-login">Go to shop login</Link>}
+        {error === "expired" && <Link to="/shop-create">Sign up again</Link>}
       </div>
     </div>
   );

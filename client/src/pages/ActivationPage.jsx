@@ -22,14 +22,15 @@ const ActivationPage = () => {
             console.log(res);
           })
           .catch((err) => {
-            setError(err.response?.data?.message || "Activation failed");
+            const message = err.response?.data?.message || "";
+            setError(message === "User already exists" ? "already-activated" : "expired");
           });
       };
       sendRequest();
     }
   }, [activationToken]);
 
-  const alreadyActivated = error === "User already exists";
+  const alreadyActivated = error === "already-activated";
 
   return (
     <div
@@ -48,11 +49,13 @@ const ActivationPage = () => {
       ) : alreadyActivated ? (
         <p>This account is already activated. Please log in.</p>
       ) : (
-        <p>{error}</p>
+        <p>This activation link is invalid or has expired. Please sign up again.</p>
       )}
       <div style={{ display: "flex", gap: "16px" }}>
         <Link to="/">Go to homepage</Link>
-        {(alreadyActivated || !error) && <Link to="/login">Go to login</Link>}
+        {alreadyActivated && <Link to="/login">Go to login</Link>}
+        {!error && <Link to="/login">Go to login</Link>}
+        {error === "expired" && <Link to="/sign-up">Sign up again</Link>}
       </div>
     </div>
   );
