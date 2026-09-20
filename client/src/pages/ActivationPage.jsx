@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ActivationPage = () => {
   const { activationToken } = useParams();
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
   // StrictMode double-invokes effects in dev; the activation request isn't idempotent
   // (a second call fails with "already exists"), so this guard is what keeps it to one call
   const requestSent = useRef(false);
@@ -22,12 +22,14 @@ const ActivationPage = () => {
             console.log(res);
           })
           .catch((err) => {
-            setError(true);
+            setError(err.response?.data?.message || "Activation failed");
           });
       };
       sendRequest();
     }
   }, [activationToken]);
+
+  const alreadyActivated = error === "User already exists";
 
   return (
     <div
@@ -35,15 +37,23 @@ const ActivationPage = () => {
         width: "100%",
         height: "100vh",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        gap: "16px",
       }}
     >
-      {error ? (
-        <p>Your token is expired!</p>
-      ) : (
+      {!error ? (
         <p>Your account has been created successfully!</p>
+      ) : alreadyActivated ? (
+        <p>This account is already activated. Please log in.</p>
+      ) : (
+        <p>{error}</p>
       )}
+      <div style={{ display: "flex", gap: "16px" }}>
+        <Link to="/">Go to homepage</Link>
+        {(alreadyActivated || !error) && <Link to="/login">Go to login</Link>}
+      </div>
     </div>
   );
 };
