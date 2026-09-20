@@ -3,6 +3,7 @@ import Shop from "../../models/Shop.js";
 import ErrorHandler from "../../utils/ErrorHandler.js";
 import { v2 as cloudinary } from "cloudinary";
 import { uploadImage } from "../../utils/cloudinary.js";
+import { toPublicShop, toPublicShopList } from "../../utils/sanitizeShop.js";
 
 // create event — shopId always comes from the authenticated seller, never the client
 export const createEvent = async (req, res, next) => {
@@ -41,7 +42,7 @@ export const createEvent = async (req, res, next) => {
       finishDate,
       images: imagesLinks,
       shopId: shop._id,
-      shop,
+      shop: toPublicShop(shop),
     });
 
     res.status(201).json({
@@ -60,7 +61,7 @@ export const getAllEventsShop = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      events,
+      events: toPublicShopList(events),
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
@@ -103,7 +104,7 @@ export const getAllEvents = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      events,
+      events: toPublicShopList(events),
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));

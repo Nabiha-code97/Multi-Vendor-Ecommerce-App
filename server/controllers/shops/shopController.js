@@ -2,6 +2,7 @@ import Shop from "../../models/Shop.js";
 import ErrorHandler from "../../utils/ErrorHandler.js";
 import { v2 as cloudinary } from "cloudinary";
 import { uploadImage } from "../../utils/cloudinary.js";
+import { toPublicShop } from "../../utils/sanitizeShop.js";
 
 // current logged-in seller
 export const getSeller = async (req, res, next) => {
@@ -32,7 +33,7 @@ export const getShopInfo = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      shop,
+      shop: toPublicShop(shop),
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
