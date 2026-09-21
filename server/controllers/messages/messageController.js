@@ -68,10 +68,11 @@ export const getMessages = async (req, res, next) => {
       return next(new ErrorHandler("Conversation not found with this id", 400));
     }
 
-    const callerId = (req.user || req.seller)._id.toString();
+    const userId = req.user?._id.toString();
+    const shopId = req.seller?._id.toString();
     const isMember =
-      conversation.members.user.toString() === callerId ||
-      conversation.members.shop.toString() === callerId;
+      conversation.members.user.toString() === userId ||
+      conversation.members.shop.toString() === shopId;
 
     if (!isMember) {
       return next(new ErrorHandler("You are not part of this conversation", 403));

@@ -34,23 +34,28 @@ export const isSeller = catchAsyncErrors(async(req,res,next) => {
 });
 
 
-// chat history is read by both sides of a conversation, so accept either cookie
+// chat history is read by both sides of a conversation. A browser can hold both
+// cookies at once (someone who's logged in as a buyer and a seller), so we
+// resolve both identities here instead of returning on the first one found —
+// otherwise a stale buyer cookie would shadow a seller who is the real caller.
 export const isAuthenticatedUserOrSeller = catchAsyncErrors(async (req, res, next) => {
     const { token, seller_token } = req.cookies;
+
+    if (!token && !seller_token) {
+        return next(new ErrorHandler("Please login to continue", 401));
+    }
 
     if (token) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         req.user = await User.findById(decoded.id);
-        return next();
     }
 
     if (seller_token) {
         const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
         req.seller = await Shop.findById(decoded.id);
-        return next();
     }
 
-    return next(new ErrorHandler("Please login to continue", 401));
+    next();
 });
 
 export const isAdmin = (...roles) => {
