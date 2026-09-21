@@ -5,7 +5,14 @@ import { toast } from "sonner";
 import { RxDashboard } from "react-icons/rx";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
-import { AiOutlineFolderAdd, AiOutlineGift, AiOutlineLogin, AiOutlineSetting } from "react-icons/ai";
+import {
+  AiOutlineFolderAdd,
+  AiOutlineGift,
+  AiOutlineLogin,
+  AiOutlineSetting,
+  AiOutlineMenuFold,
+  AiOutlineMenuUnfold,
+} from "react-icons/ai";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { VscNewFile } from "react-icons/vsc";
 import { CiMoneyBill } from "react-icons/ci";
@@ -24,9 +31,12 @@ const navItems = [
   { active: 10, to: "/dashboard-messages", label: "Messages", Icon: AiOutlineMessage },
 ];
 
-const DashboardSideBar = ({ active }) => {
+const DashboardSideBar = ({ active, collapsed, onToggleCollapse }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // labels are always hidden below the 800px breakpoint (icon-only rail on mobile);
+  // above it, `collapsed` lets the seller manually shrink the sidebar too
+  const labelClass = collapsed ? "hidden" : "hidden 800px:block";
 
   const handleLogout = () => {
     dispatch(logoutSeller())
@@ -39,12 +49,24 @@ const DashboardSideBar = ({ active }) => {
 
   return (
     <div className="w-full bg-white shadow-sm">
+      {onToggleCollapse && (
+        <div className="hidden 800px:flex w-full items-center justify-end p-4 border-b">
+          <button
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="text-[#555] hover:text-black cursor-pointer"
+          >
+            {collapsed ? <AiOutlineMenuUnfold size={24} /> : <AiOutlineMenuFold size={24} />}
+          </button>
+        </div>
+      )}
+
       {navItems.map(({ active: itemActive, to, label, Icon }) => (
         <div className="w-full flex items-center p-4" key={to}>
           <Link to={to} className="w-full flex items-center">
             <Icon size={30} color={active === itemActive ? "crimson" : "#555"} />
             <h5
-              className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
+              className={`${labelClass} pl-2 text-[18px] font-[400] ${
                 active === itemActive ? "text-[crimson]" : "text-[#555]"
               }`}
             >
@@ -56,7 +78,7 @@ const DashboardSideBar = ({ active }) => {
 
       <div className="w-full flex items-center p-4 cursor-pointer" onClick={handleLogout}>
         <AiOutlineLogin size={30} color="#555" />
-        <h5 className="hidden 800px:block pl-2 text-[18px] font-[400] text-[#555]">Log out</h5>
+        <h5 className={`${labelClass} pl-2 text-[18px] font-[400] text-[#555]`}>Log out</h5>
       </div>
     </div>
   );

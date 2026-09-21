@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import DashboardHeader from "../components/Shop/Layout/DashboardHeader";
-import DashboardSideBar from "../components/Shop/Layout/DashboardSideBar";
+import DashboardLayout from "../components/Shop/Layout/DashboardLayout";
 import ConversationList from "../components/Chat/ConversationList";
 import ChatWindow from "../components/Chat/ChatWindow";
 
@@ -25,20 +24,14 @@ const ShopInboxPage = () => {
   const activeConversation = conversations.find((c) => c._id === conversationId);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <DashboardHeader />
-      <div className="flex flex-1 min-h-0">
+    <DashboardLayout active={10}>
+      <div className="flex h-full">
+        {/* flex-1 (not w-full) so this shares space with the nav sidebar
+            instead of demanding the full viewport width and overflowing */}
         <div
           className={`${
             conversationId ? "hidden 800px:block" : "block"
-          } w-[80px] 800px:w-[330px] h-full overflow-y-auto shrink-0`}
-        >
-          <DashboardSideBar active={10} />
-        </div>
-        <div
-          className={`${
-            conversationId ? "hidden 800px:block" : "block"
-          } w-full 800px:w-[340px] h-full shrink-0`}
+          } flex-1 800px:flex-none 800px:w-[340px] h-full shrink-0`}
         >
           <ConversationList
             viewerType="shop"
@@ -56,7 +49,7 @@ const ShopInboxPage = () => {
           />
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
