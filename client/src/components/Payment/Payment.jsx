@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -14,6 +14,17 @@ const Payment = () => {
   const clientSecret = location.state?.clientSecret;
 
   const totalPrice = cart.reduce((acc, item) => acc + item.qty * item.discountPrice, 0);
+
+  // Stripe's Link widget appends its own elements directly to <body>, outside
+  // React's tree, so leaving this page via client-side routing never removes them.
+  useEffect(() => {
+    const bodyChildrenBeforeMount = new Set(document.body.children);
+    return () => {
+      for (const node of document.body.children) {
+        if (!bodyChildrenBeforeMount.has(node)) node.remove();
+      }
+    };
+  }, []);
 
   if (!clientSecret) {
     navigate("/checkout");

@@ -18,7 +18,25 @@ import Withdraw from "./models/Withdraw.js";
 
 await mongoose.connect(process.env.MONGO_URI);
 
-const img = (seed) => [{ public_id: `seed_${seed}`, url: `https://picsum.photos/seed/${seed}/500/500` }];
+// Real, verified Wikimedia Commons photos, keyed by the same seed strings used below.
+const realPhotos = {
+  ultrabook: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Laptop_collage.jpg/500px-Laptop_collage.jpg",
+  keyboard: "https://upload.wikimedia.org/wikipedia/commons/5/54/Logitech_Gaming-Keyboard_G15.jpg",
+  novaphone: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Wikipedia_homepage_on_a_large_Android_phone%2C_2015-04-16.jpg/500px-Wikipedia_homepage_on_a_large_Android_phone%2C_2015-04-16.jpg",
+  tablet: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/12.9_iPad_Pro_1st_Gen_And_Galaxy_Tab_S8_Ultra_Size_Comparison.jpg/500px-12.9_iPad_Pro_1st_Gen_And_Galaxy_Tab_S8_Ultra_Size_Comparison.jpg",
+  headset: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/S%C5%82uchawki_referencyjne_K-701_firmy_AKG.jpg/500px-S%C5%82uchawki_referencyjne_K-701_firmy_AKG.jpg",
+  controller: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/SNES-Controller-in-Hand.jpg/500px-SNES-Controller-in-Hand.jpg",
+  jacket: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Woman_in_leather_jacket_on_Vespa%2C_Antwerp_Belgium.jpg/500px-Woman_in_leather_jacket_on_Vespa%2C_Antwerp_Belgium.jpg",
+  tshirt: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Woman_in_a_V-Neck_T-Shirt.jpg/500px-Woman_in_a_V-Neck_T-Shirt.jpg",
+  shoes: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Air_Jordan_1_Banned.jpg/500px-Air_Jordan_1_Banned.jpg",
+  wallet: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
+  serum: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Cosmetics.JPG/500px-Cosmetics.JPG",
+  dogbowl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Dog_food_in_a_bowl.jpg/500px-Dog_food_in_a_bowl.jpg",
+  "event-laptop": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Laptop_collage.jpg/500px-Laptop_collage.jpg",
+  "event-jacket": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Woman_in_leather_jacket_on_Vespa%2C_Antwerp_Belgium.jpg/500px-Woman_in_leather_jacket_on_Vespa%2C_Antwerp_Belgium.jpg",
+};
+
+const img = (seed) => [{ public_id: `seed_${seed}`, url: realPhotos[seed] }];
 
 // ---------- clean slate for previously seeded data ----------
 const seedShopEmails = ["techhub@seed.test", "stylecraft@seed.test"];
@@ -44,7 +62,7 @@ const techhub = await Shop.create({
   address: "42 Circuit Ave, San Francisco, CA",
   phoneNumber: 4155551234,
   zipCode: 94105,
-  avatar: { public_id: "seed_techhub_avatar", url: "https://picsum.photos/seed/techhub-avatar/200/200" },
+  avatar: { public_id: "seed_techhub_avatar", url: "https://placehold.co/200x200/2b2f38/e8ecf1?text=TechHub" },
   availableBalance: 342.5,
   withdrawMethod: { bankName: "Chase Bank", accountHolder: "TechHub Electronics LLC", accountNumber: "000987654321" },
   transactions: [{ amount: 342.5, status: "Processing", createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) }],
@@ -58,7 +76,7 @@ const stylecraft = await Shop.create({
   address: "17 Fashion Row, New York, NY",
   phoneNumber: 2125557890,
   zipCode: 10001,
-  avatar: { public_id: "seed_stylecraft_avatar", url: "https://picsum.photos/seed/stylecraft-avatar/200/200" },
+  avatar: { public_id: "seed_stylecraft_avatar", url: "https://placehold.co/200x200/2b2f38/e8ecf1?text=StyleCraft" },
   availableBalance: 0,
 });
 
@@ -68,7 +86,7 @@ const buyer = await User.create({
   email: "buyer@seed.test",
   password: "password123",
   phoneNumber: "5551234567",
-  avatar: { public_id: "seed_buyer_avatar", url: "https://picsum.photos/seed/buyer-avatar/200/200" },
+  avatar: { public_id: "seed_buyer_avatar", url: "https://placehold.co/200x200/2b2f38/e8ecf1?text=Alex" },
   addresses: [
     { country: "US", city: "CA", address1: "123 Main St", address2: "Apt 4B", zipCode: 94107, addressType: "Home" },
     { country: "US", city: "NY", address1: "456 Office Blvd", zipCode: 10002, addressType: "Office" },
@@ -80,7 +98,7 @@ await User.create({
   email: "admin@seed.test",
   password: "password123",
   role: "admin",
-  avatar: { public_id: "seed_admin_avatar", url: "https://picsum.photos/seed/admin-avatar/200/200" },
+  avatar: { public_id: "seed_admin_avatar", url: "https://placehold.co/200x200/2b2f38/e8ecf1?text=Admin" },
 });
 
 // ---------- products (spread across real categories) ----------
